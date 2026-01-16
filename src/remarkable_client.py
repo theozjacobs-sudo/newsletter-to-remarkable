@@ -51,7 +51,7 @@ class RemarkableClient:
         if not self.one_time_code:
             raise ValueError(
                 "One-time code is required for first-time authentication. "
-                "Get it from https://my.remarkable.com/device/desktop/connect"
+                "Get it from https://my.remarkable.com/connect/desktop"
             )
 
         logger.info("Registering new device with one-time code")

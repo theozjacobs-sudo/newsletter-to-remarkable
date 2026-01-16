@@ -43,9 +43,9 @@ Click the "Fork" button at the top of this repository to create your own copy.
 
 ### 3. Get reMarkable API Token
 
-1. Go to [https://my.remarkable.com/device/desktop/connect](https://my.remarkable.com/device/desktop/connect)
+1. Go to [https://my.remarkable.com/connect/desktop](https://my.remarkable.com/connect/desktop)
 2. Click "Connect" to generate a one-time code
-3. Copy this code (you'll add it to GitHub Secrets)
+3. Copy this code **immediately** (you'll add it to GitHub Secrets)
 
 **Important**:
 - This one-time code is **only used for the first sync**. After that, a persistent device token is cached automatically.
