@@ -1,0 +1,44 @@
+# Newsletter to reMarkable Configuration
+# Copy this file to config.yaml and fill in your details
+
+# Email accounts to fetch newsletters from
+email_accounts:
+  - provider: gmail
+    email: your-email@gmail.com
+    # For Gmail, use an App Password: https://support.google.com/accounts/answer/185833
+    password_env: GMAIL_PASSWORD
+    imap_server: imap.gmail.com
+    imap_port: 993
+    # Only fetch emails from these senders (optional, leave empty for all)
+    allowed_senders: []
+    # Or specify a label/folder to fetch from
+    folder: "newsletters"
+
+  - provider: icloud
+    email: your-email@icloud.com
+    # For iCloud, use an App-Specific Password: https://support.apple.com/en-us/HT204397
+    password_env: ICLOUD_PASSWORD
+    imap_server: imap.mail.me.com
+    imap_port: 993
+    folder: "INBOX"
+    allowed_senders: []
+
+# reMarkable settings
+remarkable:
+  # Your reMarkable account credentials
+  # Get a one-time code from https://my.remarkable.com/device/desktop/connect
+  one_time_code_env: REMARKABLE_TOKEN
+  # Folder to store newsletters in (will be created if it doesn't exist)
+  folder_name: "Newsletters"
+
+# Cleanup settings
+cleanup:
+  # Delete newsletters older than this many days
+  max_age_days: 30
+
+# Sync settings
+sync:
+  # How many days back to check for emails
+  lookback_days: 7
+  # Mark emails as read after processing
+  mark_as_read: true
