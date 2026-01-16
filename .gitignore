@@ -1,0 +1,27 @@
+# Environment and secrets
+.env
+config.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Temporary files
+*.pdf
+*.log
+tracker.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
