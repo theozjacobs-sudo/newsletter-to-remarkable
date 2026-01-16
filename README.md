@@ -43,11 +43,14 @@ Click the "Fork" button at the top of this repository to create your own copy.
 
 ### 3. Get reMarkable API Token
 
-1. Go to [https://my.remarkable.com/device/desktop/connect](https://my.remarkable.com/device/desktop/connect)
+1. Go to [https://my.remarkable.com/connect/desktop](https://my.remarkable.com/connect/desktop)
 2. Click "Connect" to generate a one-time code
-3. Copy this code (you'll add it to GitHub Secrets)
+3. Copy this code **immediately** (you'll add it to GitHub Secrets)
 
-**Note**: This code expires after some time. If your sync stops working, generate a new one and update the GitHub Secret.
+**Important**:
+- This one-time code is **only used for the first sync**. After that, a persistent device token is cached automatically.
+- The code itself expires if not used within a short time, so add it to GitHub Secrets quickly.
+- If you need to re-authenticate later, clear the cache in GitHub Actions and generate a new code.
 
 ### 4. Configure GitHub Secrets
 
@@ -85,12 +88,38 @@ To test immediately without waiting for the daily schedule:
 
 ## Configuration
 
+### How Newsletter Filtering Works
+
+**Important**: By default, the system fetches **ALL emails** from your inbox from the last 7 days. To avoid syncing personal emails, you have two options:
+
+#### Option A: Use a Dedicated Folder (Recommended)
+
+1. In Gmail: Create a label called "Newsletters"
+2. Set up filters to automatically label newsletters (Gmail → Settings → Filters)
+3. In the workflow file, change `folder: 'INBOX'` to `folder: 'Newsletters'`
+
+For iCloud, create a mailbox and set up rules to move newsletters there.
+
+#### Option B: Filter by Sender
+
+Add specific newsletter sender addresses to `allowed_senders`:
+
+```yaml
+email_accounts:
+  - provider: gmail
+    email: ${{ secrets.GMAIL_EMAIL }}
+    folder: INBOX
+    allowed_senders:
+      - newsletter@substack.com
+      - hello@example.com
+      - updates@another.com
+```
+
+Only emails from these addresses will be synced.
+
 ### Customizing Settings
 
-If you want to customize the configuration (e.g., change cleanup age, folders, etc.):
-
-1. Edit `.github/workflows/sync-newsletters.yml`
-2. Modify the config section:
+Edit `.github/workflows/sync-newsletters.yml` to modify:
 
 ```yaml
 cleanup:
@@ -99,18 +128,6 @@ cleanup:
 sync:
   lookback_days: 7  # How many days back to check for emails
   mark_as_read: true  # Mark emails as read after processing
-```
-
-### Filtering Newsletters
-
-To only sync newsletters from specific senders, edit the workflow file:
-
-```yaml
-email_accounts:
-  - provider: gmail
-    allowed_senders:
-      - newsletter@example.com
-      - updates@another.com
 ```
 
 ## Local Development

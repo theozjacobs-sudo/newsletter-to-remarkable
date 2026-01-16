@@ -27,14 +27,47 @@ class RemarkableClient:
 
     def authenticate(self) -> None:
         """Authenticate with reMarkable Cloud."""
-        if not self.one_time_code:
-            raise ValueError("One-time code is required for authentication")
-
+        import os
         logger.info("Authenticating with reMarkable Cloud")
-        self.client.register_device(self.one_time_code)
-        self.client.renew_token()
-        self.is_authenticated = True
-        logger.info("Successfully authenticated with reMarkable Cloud")
+
+        # Log the config directory being used
+        config_dir = os.path.expanduser("~/.rmapi")
+        logger.info(f"Config directory: {config_dir}")
+        logger.info(f"Config exists: {os.path.exists(config_dir)}")
+        if os.path.exists(config_dir):
+            logger.info(f"Config contents: {os.listdir(config_dir)}")
+
+        # Check if we already have a registered device token
+        try:
+            # Try to renew token (works if already registered)
+            self.client.renew_token()
+            logger.info("Successfully authenticated using existing token")
+            self.is_authenticated = True
+            return
+        except Exception as e:
+            logger.info(f"No existing token found, will register new device: {e}")
+
+        # If token renewal failed, register with one-time code
+        if not self.one_time_code:
+            raise ValueError(
+                "One-time code is required for first-time authentication. "
+                "Get it from https://my.remarkable.com/connect/desktop"
+            )
+
+        logger.info("Registering new device with one-time code")
+        # Strip whitespace from code
+        clean_code = self.one_time_code.strip()
+        logger.info(f"Code length: {len(clean_code)} characters")
+
+        try:
+            self.client.register_device(clean_code)
+            self.client.renew_token()
+            self.is_authenticated = True
+            logger.info("Successfully registered and authenticated")
+        except Exception as e:
+            logger.error(f"Registration failed: {e}")
+            logger.error(f"Code was: '{clean_code}' (showing for debugging)")
+            raise
 
     def get_or_create_folder(self, folder_name: str) -> Folder:
         """

@@ -49,7 +49,8 @@ jobs:
               imap_server: imap.gmail.com
               imap_port: 993
               folder: ${{ secrets.GMAIL_FOLDER || 'INBOX' }}
-              allowed_senders: []
+              allowed_senders:
+                - adamtooze+chartbook-top-links@substack.com
 
             - provider: icloud
               email: ${{ secrets.ICLOUD_EMAIL }}
@@ -57,7 +58,8 @@ jobs:
               imap_server: imap.mail.me.com
               imap_port: 993
               folder: ${{ secrets.ICLOUD_FOLDER || 'INBOX' }}
-              allowed_senders: []
+              allowed_senders:
+                - adamtooze+chartbook-top-links@substack.com
 
           remarkable:
             one_time_code_env: REMARKABLE_TOKEN
@@ -78,6 +80,14 @@ jobs:
           key: remarkable-tracker-${{ github.run_id }}
           restore-keys: |
             remarkable-tracker-
+
+      - name: Restore reMarkable token cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.rmapi
+          key: remarkable-token-${{ github.repository }}
+          restore-keys: |
+            remarkable-token-
 
       - name: Run sync
         env:
