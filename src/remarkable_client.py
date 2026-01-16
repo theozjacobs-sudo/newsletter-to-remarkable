@@ -60,13 +60,25 @@ class RemarkableClient:
         logger.info(f"Code length: {len(clean_code)} characters")
 
         try:
+            logger.info(f"Attempting registration with API...")
             self.client.register_device(clean_code)
+            logger.info("Device registered successfully, renewing token...")
             self.client.renew_token()
             self.is_authenticated = True
             logger.info("Successfully registered and authenticated")
         except Exception as e:
             logger.error(f"Registration failed: {e}")
+            logger.error(f"Exception type: {type(e).__name__}")
             logger.error(f"Code was: '{clean_code}' (showing for debugging)")
+
+            # Try to get more details from the exception
+            import traceback
+            logger.error(f"Full traceback:\n{traceback.format_exc()}")
+
+            # Check if there's an underlying HTTP error
+            if hasattr(e, '__cause__') and e.__cause__:
+                logger.error(f"Underlying cause: {e.__cause__}")
+
             raise
 
     def get_or_create_folder(self, folder_name: str) -> Folder:
