@@ -79,6 +79,14 @@ jobs:
           restore-keys: |
             remarkable-tracker-
 
+      - name: Restore reMarkable token cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.rmapi
+          key: remarkable-token-${{ github.repository }}
+          restore-keys: |
+            remarkable-token-
+
       - name: Run sync
         env:
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}

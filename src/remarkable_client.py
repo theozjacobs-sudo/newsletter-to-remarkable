@@ -27,14 +27,30 @@ class RemarkableClient:
 
     def authenticate(self) -> None:
         """Authenticate with reMarkable Cloud."""
-        if not self.one_time_code:
-            raise ValueError("One-time code is required for authentication")
-
         logger.info("Authenticating with reMarkable Cloud")
+
+        # Check if we already have a registered device token
+        try:
+            # Try to renew token (works if already registered)
+            self.client.renew_token()
+            logger.info("Successfully authenticated using existing token")
+            self.is_authenticated = True
+            return
+        except Exception as e:
+            logger.info(f"No existing token found, will register new device: {e}")
+
+        # If token renewal failed, register with one-time code
+        if not self.one_time_code:
+            raise ValueError(
+                "One-time code is required for first-time authentication. "
+                "Get it from https://my.remarkable.com/device/desktop/connect"
+            )
+
+        logger.info("Registering new device with one-time code")
         self.client.register_device(self.one_time_code)
         self.client.renew_token()
         self.is_authenticated = True
-        logger.info("Successfully authenticated with reMarkable Cloud")
+        logger.info("Successfully registered and authenticated")
 
     def get_or_create_folder(self, folder_name: str) -> Folder:
         """
